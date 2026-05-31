@@ -399,27 +399,38 @@
             function setAccentColor(hex) {
                 document.documentElement.style.setProperty('--accent', hex);
                 swatchBg.style.background = hex;
+                colorPicker.value = hex;
                 updateTodayText();
+                localStorage.setItem('cal-accent', hex);
+            }
+
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                updateTodayText();
+                localStorage.setItem('cal-theme', theme);
             }
 
             colorPicker.addEventListener('input', function() {
                 setAccentColor(this.value);
             });
 
-            // OS/Notionのカラーモードを自動検知、手動トグルで上書き可能
+            // 保存済みの色・テーマを復元
+            const savedAccent = localStorage.getItem('cal-accent');
+            const savedTheme = localStorage.getItem('cal-theme');
+            if (savedAccent) setAccentColor(savedAccent);
+
+            // テーマ: 保存済み → OS設定 の優先順で適用
             const mq = window.matchMedia('(prefers-color-scheme: dark)');
-            function applySystemTheme(e) {
-                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                setTheme(mq.matches ? 'dark' : 'light');
+                mq.addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'));
             }
-            applySystemTheme(mq);
-            mq.addEventListener('change', applySystemTheme);
 
             modeToggle.addEventListener('click', function() {
-                const html = document.documentElement;
-                const isDark = html.getAttribute('data-theme') === 'dark';
-                html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-                mq.removeEventListener('change', applySystemTheme);
-                updateTodayText();
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                setTheme(isDark ? 'light' : 'dark');
             });
 
             function generateCalendar(month, year) {
