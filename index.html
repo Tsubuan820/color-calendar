@@ -396,33 +396,52 @@
                 );
             }
 
+            // URLパラメーターを読む（ジェネレーターで生成したURL用）
+            const params = new URLSearchParams(window.location.search);
+            const paramAccent = params.get('accent');
+            const paramTheme  = params.get('theme');
+            const hasParams   = !!(paramAccent || paramTheme);
+
             function setAccentColor(hex) {
                 document.documentElement.style.setProperty('--accent', hex);
                 swatchBg.style.background = hex;
                 colorPicker.value = hex;
                 updateTodayText();
-                localStorage.setItem('cal-accent', hex);
+                // URLパラメーターがある時はlocalStorageに書かない（複数埋め込みの独立性を保つ）
+                if (!hasParams) localStorage.setItem('cal-accent', hex);
             }
 
             function setTheme(theme) {
                 document.documentElement.setAttribute('data-theme', theme);
                 updateTodayText();
-                localStorage.setItem('cal-theme', theme);
+                localStorage.setItem('cal-theme', theme); // テーマはURLパラメーターがあっても保存する
             }
 
             colorPicker.addEventListener('input', function() {
                 setAccentColor(this.value);
             });
 
-            // 保存済みの色・テーマを復元
-            const savedAccent = localStorage.getItem('cal-accent');
-            const savedTheme = localStorage.getItem('cal-theme');
-            if (savedAccent) setAccentColor(savedAccent);
-
-            // テーマ: 保存済み → OS設定 の優先順で適用
+            // 初期化: URLパラメーター > localStorage > OS設定
             const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+            if (paramAccent) {
+                setAccentColor(paramAccent);
+            } else {
+                const savedAccent = localStorage.getItem('cal-accent');
+                if (savedAccent) setAccentColor(savedAccent);
+            }
+
+            // URLパラメーターがある時はカラーピッカーを隠す（色はジェネレーターで設定）
+            if (hasParams) {
+                document.querySelector('.color-swatch-wrapper').style.display = 'none';
+            }
+
+            // テーマ優先順: ユーザーの保存済み > URLパラメーター > OS設定
+            const savedTheme = localStorage.getItem('cal-theme');
             if (savedTheme) {
                 setTheme(savedTheme);
+            } else if (paramTheme) {
+                setTheme(paramTheme);
             } else {
                 setTheme(mq.matches ? 'dark' : 'light');
                 mq.addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'));
