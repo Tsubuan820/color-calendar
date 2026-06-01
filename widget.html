@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>カレンダーウィジェット</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent: #4B5563;
@@ -30,6 +29,7 @@
         }
 
         body {
+            box-sizing: border-box;
             font-family: 'Montserrat', 'Noto Sans JP', sans-serif;
             background: var(--page-bg);
             min-height: 100vh;
@@ -51,7 +51,6 @@
             padding: 1rem;
             position: relative;
             overflow: hidden;
-            transition: background 0.3s ease;
         }
 
         .calendar-header {
@@ -270,29 +269,47 @@
             pointer-events: none;
         }
 
-        /* モード切替ボタン */
-        .mode-button {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
+        /* モード切替トグルスイッチ */
+        .mode-toggle {
+            background: none;
             border: none;
+            padding: 0;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .switch-track {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            border-radius: 999px;
             background: var(--hover-bg);
-            color: var(--text-day);
+            transition: background 0.2s ease;
         }
 
-        .mode-button:hover {
-            transform: scale(1.12);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .mode-button svg {
-            width: 14px;
-            height: 14px;
+        [data-theme="dark"] .switch-knob {
+            transform: translateX(20px);
+        }
+
+        .switch-knob svg {
+            width: 11px;
+            height: 11px;
+            color: var(--today-text);
         }
 
         .icon-sun { display: block; }
@@ -349,14 +366,18 @@
                     <input type="color" id="accent-color-picker" value="#4B5563">
                 </div>
 
-                <button class="mode-button" id="mode-toggle" title="ライト / ダーク切替">
-                    <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="5" stroke-width="2"></circle>
-                        <path stroke-width="2" stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-                    </svg>
-                    <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
-                    </svg>
+                <button class="mode-toggle" id="mode-toggle" title="ライト / ダーク切替" aria-label="ライト / ダーク切替">
+                    <span class="switch-track">
+                        <span class="switch-knob">
+                            <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="5" stroke-width="2"></circle>
+                                <path stroke-width="2" stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                            </svg>
+                            <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                            </svg>
+                        </span>
+                    </span>
                 </button>
             </div>
         </div>
@@ -399,53 +420,44 @@
             // URLパラメーターを読む（ジェネレーターで生成したURL用）
             const params = new URLSearchParams(window.location.search);
             const paramAccent = params.get('accent');
-            const paramTheme  = params.get('theme');
-            const hasParams   = !!(paramAccent || paramTheme);
+            const paramTheme  = params.get('theme'); // ジェネレーターで選んだ初期テーマ（light/dark）
+            const paramId     = params.get('id');    // 埋め込みごとのユニークID。テーマ保存のキーに使う
+            const isEmbedded  = !!paramAccent;       // ジェネレーター生成URL（色指定あり）で埋め込まれた状態
+            const themeKey    = paramId ? 'cal-theme-' + paramId : null;
 
             function setAccentColor(hex) {
                 document.documentElement.style.setProperty('--accent', hex);
                 swatchBg.style.background = hex;
                 colorPicker.value = hex;
                 updateTodayText();
-                // URLパラメーターがある時はlocalStorageに書かない（複数埋め込みの独立性を保つ）
-                if (!hasParams) localStorage.setItem('cal-accent', hex);
+                // 単体表示（色指定なし）の時だけ色を保存。埋め込み時はURLが正。
+                if (!isEmbedded) localStorage.setItem('cal-accent', hex);
             }
 
             function setTheme(theme) {
                 document.documentElement.setAttribute('data-theme', theme);
                 updateTodayText();
-                localStorage.setItem('cal-theme', theme); // テーマはURLパラメーターがあっても保存する
+                // IDごとにテーマを保存。IDで分離されるので別ページの埋め込みには影響しない。
+                if (themeKey) localStorage.setItem(themeKey, theme);
             }
 
             colorPicker.addEventListener('input', function() {
                 setAccentColor(this.value);
             });
 
-            // 初期化: URLパラメーター > localStorage > OS設定
-            const mq = window.matchMedia('(prefers-color-scheme: dark)');
-
+            // 色の初期化: URLパラメーター（埋め込み） > localStorage（単体表示）
             if (paramAccent) {
                 setAccentColor(paramAccent);
+                // 埋め込み時は色をジェネレーターで決めるのでカラーピッカーを隠す
+                document.querySelector('.color-swatch-wrapper').style.display = 'none';
             } else {
                 const savedAccent = localStorage.getItem('cal-accent');
                 if (savedAccent) setAccentColor(savedAccent);
             }
 
-            // URLパラメーターがある時はカラーピッカーを隠す（色はジェネレーターで設定）
-            if (hasParams) {
-                document.querySelector('.color-swatch-wrapper').style.display = 'none';
-            }
-
-            // テーマ優先順: ユーザーの保存済み > URLパラメーター > OS設定
-            const savedTheme = localStorage.getItem('cal-theme');
-            if (savedTheme) {
-                setTheme(savedTheme);
-            } else if (paramTheme) {
-                setTheme(paramTheme);
-            } else {
-                setTheme(mq.matches ? 'dark' : 'light');
-                mq.addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'));
-            }
+            // テーマの初期化: 閲覧者が切り替えた保存値 > ジェネレーターの初期テーマ > ライト
+            const savedTheme = themeKey && localStorage.getItem(themeKey);
+            setTheme(savedTheme || paramTheme || 'light');
 
             modeToggle.addEventListener('click', function() {
                 const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -496,6 +508,19 @@
                     el.classList.add('day', 'other-month');
                     el.textContent = i;
                     calendarDays.appendChild(el);
+                }
+
+                // 親（ジェネレーターのプレビュー）にカレンダーの高さを通知して、ぴったり合わせてもらう
+                requestAnimationFrame(postCalendarHeight);
+            }
+
+            // カレンダーの実寸を親フレームに送る（ジェネレーターのプレビュー用。Notion等では無視される）
+            function postCalendarHeight() {
+                if (window.parent === window) return;
+                const card = document.querySelector('.calendar-card');
+                if (card) {
+                    const h = Math.ceil(card.getBoundingClientRect().height) + 20; // body の上下paddingぶん
+                    window.parent.postMessage({ type: 'cal-height', height: h }, '*');
                 }
             }
 

@@ -13,50 +13,101 @@
             background: #f5f5f5;
             min-height: 100vh;
             color: #374151;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .page {
+        .app {
             max-width: 480px;
             margin: 0 auto;
-            padding: 48px 20px 64px;
+            padding: 48px 24px 40px;
         }
 
         /* ヘッダー */
-        .header {
+        .app-header {
             text-align: center;
             margin-bottom: 32px;
         }
 
-        .header h1 {
-            font-size: 1rem;
+        .app-header h1 {
+            font-size: 1.05rem;
             font-weight: 600;
             letter-spacing: 2px;
             color: #374151;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
-        .header p {
-            font-size: 0.72rem;
+        .tagline {
+            font-size: 0.78rem;
             color: #9CA3AF;
             letter-spacing: 0.5px;
         }
 
-        /* 設定パネル（1枚のカード） */
+        /* カラー + テーマ（白背景なしのフラット。中央を仕切り線で区切る） */
         .settings-card {
-            background: white;
-            border-radius: 14px;
-            padding: 20px 20px 18px;
-            margin-bottom: 16px;
             display: flex;
-            align-items: center;
-            gap: 16px;
+            align-items: stretch;
+            gap: 24px;
+            padding: 4px 2px;
+            margin-bottom: 18px;
         }
 
-        /* カラースウォッチ */
+        .setting-col {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .v-divider {
+            width: 1px;
+            background: #E5E7EB;
+            flex-shrink: 0;
+            align-self: stretch;
+        }
+
+        @media (max-width: 420px) {
+            .settings-card { flex-direction: column; gap: 18px; }
+            .v-divider { width: auto; height: 1px; }
+        }
+
+        .panel-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #9CA3AF;
+            margin-bottom: 14px;
+        }
+
+
+        /* カラー設定 */
+        .color-control {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .color-hex-input {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #374151;
+            letter-spacing: 1px;
+            font-family: 'Montserrat', monospace;
+            flex: 1;
+            min-width: 0;
+            border: none;
+            background: transparent;
+            outline: none;
+            cursor: text;
+            padding: 4px 0;
+            border-bottom: 1.5px solid #D1D5DB;
+            transition: border-color 0.2s;
+        }
+
+        .color-hex-input:focus { border-bottom-color: #374151; }
+
         .color-swatch-wrapper {
             position: relative;
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: 2px solid rgba(0,0,0,0.08);
             overflow: hidden;
@@ -88,54 +139,34 @@
             padding: 0;
         }
 
-        .color-hex-input {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #374151;
-            letter-spacing: 1px;
-            font-family: 'Montserrat', monospace;
-            width: 88px;
-            border: none;
-            background: transparent;
-            outline: none;
-            cursor: text;
-            padding: 2px 0;
-            border-bottom: 1.5px solid #D1D5DB;
-            transition: border-color 0.2s;
-        }
-
-        .color-hex-input:focus {
-            border-bottom-color: #374151;
-        }
-
-        /* テーマトグル */
+        /* テーマ設定 */
         .theme-toggle {
-            margin-left: auto;
             display: flex;
-            background: #F3F4F6;
+            background: #E2E4E8;
             border-radius: 10px;
             padding: 3px;
             gap: 3px;
         }
 
         .theme-btn {
-            padding: 7px 14px;
+            flex: 1;
+            padding: 9px;
             border-radius: 8px;
             border: none;
             background: transparent;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 500;
-            color: #9CA3AF;
+            color: #6B7280;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 7px;
             transition: all 0.2s;
-            white-space: nowrap;
         }
 
-        .theme-btn svg { width: 13px; height: 13px; }
+        .theme-btn svg { width: 14px; height: 14px; }
 
         .theme-btn.active-light {
             background: white;
@@ -149,85 +180,106 @@
             box-shadow: 0 1px 4px rgba(0,0,0,0.2);
         }
 
-        /* プレビュー */
-        .preview-card {
-            border-radius: 14px;
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-
-        .preview-bar {
-            background: #E5E7EB;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .preview-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #D1D5DB;
-        }
-
-        .preview-bar-label {
-            font-size: 0.62rem;
-            color: #9CA3AF;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            margin-left: 4px;
-        }
-
-        iframe {
-            width: 100%;
-            height: 460px;
-            border: none;
-            display: block;
-            overflow: hidden;
-        }
-
         /* URL + コピー */
-        .url-area {
-            background: white;
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 32px;
+        .url-row {
             display: flex;
             align-items: center;
             gap: 10px;
+            position: relative;
+        }
+
+        /* コピー完了トースト（ボタンの上にふわっと） */
+        .copy-toast {
+            position: absolute;
+            right: 0;
+            bottom: calc(100% + 10px);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #1F2937;
+            color: #fff;
+            font-size: 0.66rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 6px 11px;
+            border-radius: 8px;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+            opacity: 0;
+            transform: translateY(6px) scale(0.96);
+            pointer-events: none;
+            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .copy-toast svg { width: 12px; height: 12px; color: #6EE7B7; }
+
+        .copy-toast::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 13px;
+            border: 5px solid transparent;
+            border-top-color: #1F2937;
+        }
+
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .url-box {
             flex: 1;
-            font-size: 0.68rem;
+            min-width: 0;
+            font-size: 0.7rem;
             font-family: 'Montserrat', monospace;
             color: #6B7280;
-            word-break: break-all;
-            line-height: 1.6;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .copy-btn {
             flex-shrink: 0;
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            border: none;
-            background: #374151;
-            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            border: 1px solid #E5E7EB;
+            background: #fff;
+            color: #6B7280;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .copy-btn:hover { background: #1F2937; }
-        .copy-btn.copied { background: #059669; }
-        .copy-btn svg { width: 13px; height: 13px; }
+        .copy-btn:hover { background: #F3F4F6; color: #374151; }
+        .copy-btn:active { transform: scale(0.92); }
+        .copy-btn svg { width: 16px; height: 16px; }
+
+        /* プレビュー */
+        .preview-card {
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            margin-bottom: 16px;
+        }
+
+        .url-area {
+            padding: 0 2px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 456px;
+            border: none;
+            display: block;
+            overflow: hidden;
+        }
 
         /* フッター */
         .footer {
+            margin-top: 24px;
             text-align: center;
             font-size: 0.72rem;
             color: #9CA3AF;
@@ -245,56 +297,67 @@
     </style>
 </head>
 <body>
-    <div class="page">
+    <div class="app">
 
-        <div class="header">
+        <header class="app-header">
             <h1>CALENDAR WIDGET GENERATOR</h1>
-        </div>
+            <p class="tagline">色とテーマを選ぶ → URLをコピー → Notionに貼り付け</p>
+        </header>
 
-        <!-- 設定（1枚） -->
-        <div class="settings-card">
-            <div class="color-swatch-wrapper">
-                <div class="color-swatch-bg" id="gen-swatch-bg"></div>
-                <input type="color" id="gen-color-picker" value="#4B5563">
+        <!-- 設定（1枚のカードを中で区切る） -->
+        <section class="settings-card">
+            <div class="setting-col">
+                <div class="panel-label">Color</div>
+                <div class="color-control">
+                    <div class="color-swatch-wrapper" title="クリックで色を選ぶ">
+                        <div class="color-swatch-bg" id="gen-swatch-bg"></div>
+                        <input type="color" id="gen-color-picker" value="#4B5563">
+                    </div>
+                    <input type="text" class="color-hex-input" id="gen-color-hex" value="#4B5563" maxlength="7" spellcheck="false">
+                </div>
             </div>
-            <input type="text" class="color-hex-input" id="gen-color-hex" value="#4B5563" maxlength="7" spellcheck="false">
 
-            <div class="theme-toggle">
-                <button class="theme-btn active-light" id="btn-light">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="5" stroke-width="2"/>
-                        <path stroke-width="2" stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                    </svg>
-                    Light
-                </button>
-                <button class="theme-btn" id="btn-dark">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-                    </svg>
-                    Dark
-                </button>
+            <div class="v-divider"></div>
+
+            <div class="setting-col">
+                <div class="panel-label">Theme</div>
+                <div class="theme-toggle">
+                    <button class="theme-btn active-light" id="btn-light">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5" stroke-width="2"/>
+                            <path stroke-width="2" stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        </svg>
+                        Light
+                    </button>
+                    <button class="theme-btn" id="btn-dark">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                        </svg>
+                        Dark
+                    </button>
+                </div>
             </div>
-        </div>
+        </section>
 
         <!-- プレビュー -->
         <div class="preview-card">
-            <div class="preview-bar">
-                <div class="preview-dot"></div>
-                <div class="preview-dot"></div>
-                <div class="preview-dot"></div>
-                <span class="preview-bar-label">Preview</span>
-            </div>
-            <iframe id="preview-frame" src="widget.html?accent=%234B5563&theme=light" scrolling="no"></iframe>
+            <iframe id="preview-frame" scrolling="no"></iframe>
         </div>
 
-        <!-- URL + コピー -->
+        <!-- 埋め込みURL（見出し・URL・ボタンを1行に） -->
         <div class="url-area">
-            <div class="url-box" id="gen-url"></div>
-            <button class="copy-btn" id="copy-btn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="15" height="15">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                </svg>
-            </button>
+            <div class="url-row">
+                <div class="url-box" id="gen-url"></div>
+                <button class="copy-btn" id="copy-btn" title="URLをコピー">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                </button>
+                <span class="copy-toast" id="copy-toast">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                    コピーしました
+                </span>
+            </div>
         </div>
 
         <footer class="footer">
@@ -312,77 +375,118 @@
         const previewFrame = document.getElementById('preview-frame');
         const urlBox       = document.getElementById('gen-url');
         const copyBtn      = document.getElementById('copy-btn');
-        const copyLabel    = document.getElementById('copy-label');
 
         let currentAccent = '#4B5563';
         let currentTheme  = 'light';
 
+        // ウィジェットから通知された高さにプレビューを合わせる（月送りで6週になっても見切れず、5週なら余白も出ない）
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'cal-height' && e.data.height) {
+                previewFrame.style.height = e.data.height + 'px';
+            }
+        });
+
+        // 各埋め込みを独立させるユニークID（設定を変えるたびに振り直す）
+        function randomId() {
+            return Math.random().toString(36).slice(2, 8);
+        }
+        let currentId = randomId();
+
         const BASE_URL = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/') + 'widget.html';
 
+        // コピー用: id付き（埋め込み先でテーマをページごとに記憶できる）
         function buildUrl() {
-            return `${BASE_URL}?accent=${encodeURIComponent(currentAccent)}&theme=${currentTheme}`;
+            return `${BASE_URL}?accent=${encodeURIComponent(currentAccent)}&theme=${currentTheme}&id=${currentId}`;
         }
 
-        function update() {
+        // プレビュー用: idなし（テーマは保存しない）。末尾の _ は毎回の再読み込みを保証するキャッシュ回避用。
+        function buildPreviewUrl() {
+            return `${BASE_URL}?accent=${encodeURIComponent(currentAccent)}&theme=${currentTheme}&_=${Date.now()}`;
+        }
+
+        function render() {
             swatchBg.style.background = currentAccent;
             colorHex.value = currentAccent.toUpperCase();
             colorPicker.value = currentAccent;
             urlBox.textContent = buildUrl();
-            previewFrame.src = buildUrl();
+            previewFrame.src = buildPreviewUrl();
         }
 
-        // カラーピッカーで選択
+
+        // 設定変更時: 新しいIDを振り直してから再描画（毎回独立したウィジェットに）
+        function onConfigChange() {
+            currentId = randomId();
+            render();
+        }
+
+        // カラーピッカー
         colorPicker.addEventListener('input', function() {
             currentAccent = this.value;
-            update();
+            onConfigChange();
         });
 
-        // HEXコードを直接入力
+        // HEXコード直接入力
         colorHex.addEventListener('input', function() {
             let val = this.value.trim();
             if (!val.startsWith('#')) val = '#' + val;
             if (/^#[0-9a-fA-F]{6}$/.test(val)) {
                 currentAccent = val;
-                swatchBg.style.background = val;
-                colorPicker.value = val;
-                urlBox.textContent = buildUrl();
-                previewFrame.src = buildUrl();
+                onConfigChange();
             }
         });
 
         colorHex.addEventListener('blur', function() {
-            // フォーカスが外れたら現在の正しい値に揃える
             this.value = currentAccent.toUpperCase();
         });
 
+        // テーマ選択
         btnLight.addEventListener('click', () => {
             currentTheme = 'light';
             btnLight.classList.add('active-light');
-            btnLight.classList.remove('active-dark');
-            btnDark.classList.remove('active-light', 'active-dark');
-            update();
+            btnDark.classList.remove('active-dark');
+            onConfigChange();
         });
 
         btnDark.addEventListener('click', () => {
             currentTheme = 'dark';
             btnDark.classList.add('active-dark');
-            btnDark.classList.remove('active-light');
-            btnLight.classList.remove('active-light', 'active-dark');
-            update();
+            btnLight.classList.remove('active-light');
+            onConfigChange();
         });
+
+        // コピー（IDは変えない＝表示と同じものがコピーされる）
+        const copyToast = document.getElementById('copy-toast');
+        let toastTimer = null;
+
+        // クリップボードAPI優先、ダメな環境では textarea + execCommand でフォールバック
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text);
+            }
+            return new Promise((resolve, reject) => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); resolve(); }
+                catch (e) { reject(e); }
+                document.body.removeChild(ta);
+            });
+        }
+
+        function showCopiedToast() {
+            copyToast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => copyToast.classList.remove('show'), 1600);
+        }
 
         copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(buildUrl()).then(() => {
-                copyBtn.classList.add('copied');
-                copyBtn.innerHTML = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="15" height="15"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
-                setTimeout(() => {
-                    copyBtn.classList.remove('copied');
-                    copyBtn.innerHTML = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="15" height="15"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>`;
-                }, 2000);
-            });
+            copyToClipboard(buildUrl()).then(showCopiedToast).catch(() => {});
         });
 
-        update();
+        render();
     </script>
 </body>
 </html>
